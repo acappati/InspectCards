@@ -78,8 +78,10 @@ def printTable(filename: str) -> str:
 
 if __name__ == "__main__":
     # card CCLUB
-    filename = "../card_CCLUB/hhbbtt_res1b_etau_2022_13p6TeV.txt"
+    # filename = "../card_CCLUB/hhbbtt_res1b_etau_2022_13p6TeV.txt"
     # card Francisco
-    # filename =
+    # filename = "../card_Francisco_11Jun/MuTau_BinaryTransf_Res1b_signal_2022.txt"
+    filename = "../card_Francisco_26Jun/MuTau_BinaryTransf_Res1b_signal_2022.txt"
 
+    print(f"Reading file {filename} ...\n")
     printTable(filename)
