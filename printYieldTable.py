@@ -5,7 +5,7 @@ Author: Alessandra Cappati
 
 Script to read datacard and print table with processes and rates
 
-Requirements: tabulate
+Requirements: tabulate, python 3.12
 Run with: python3 printYieldTable.py
 """
 
