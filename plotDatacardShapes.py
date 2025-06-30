@@ -7,7 +7,7 @@ Requirements: python 2, ROOT
 run with: python plotDatacardShapes.py
 """
 
-from ROOT import TCanvas, TFile, THStack, TLegend, gPad
+from ROOT import TCanvas, TFile, gPad, kRed, kBlue, kOrange, kMagenta, kGreen, kViolet
 
 
 def readCardsAndPlot(filenametxt, filenameroot):
@@ -56,41 +56,77 @@ def readCardsAndPlot(filenametxt, filenameroot):
         histolist.append(histoitem)
         #print(item)
 
-    # do plot
+        ## put colors and pretty things in the histos
+        if histoitem.GetName().startswith("ggHH"):
+            histoitem.SetLineColor(kRed+1)
+            histoitem.SetMarkerColor(kRed+1)
+        elif histoitem.GetName().startswith("qqHH"):
+            histoitem.SetLineColor(kBlue+1)
+            histoitem.SetMarkerColor(kBlue+1)
+        elif histoitem.GetName() == "DY":
+            histoitem.SetLineColor(kOrange+7)
+            histoitem.SetMarkerColor(kOrange+7)
+        elif histoitem.GetName() == "TT":
+            histoitem.SetLineColor(kRed-1)
+            histoitem.SetMarkerColor(kRed-1)
+        elif histoitem.GetName() == "qcd":
+            histoitem.SetLineColor(kMagenta)
+            histoitem.SetMarkerColor(kMagenta)
+        elif histoitem.GetName().startswith("ggH_") or histoitem.GetName().startswith("qqH_") or histoitem.GetName().startswith("ZH_") or histoitem.GetName().startswith("WH_") or histoitem.GetName().startswith("VH_") or histoitem.GetName().startswith("ttH_"):
+            histoitem.SetLineColor(kGreen+1)
+            histoitem.SetMarkerColor(kGreen+1)
+        else:
+            histoitem.SetLineColor(kViolet+2)
+            histoitem.SetMarkerColor(kViolet+2)
+        histoitem.SetLineStyle(1)
+        histoitem.SetLineWidth(2)
+        histoitem.SetMarkerStyle(6)
+
+    # --- do plot with all shapes together
     canvas = TCanvas("canvas", "canvas", 800, 600)
     canvas.cd()
-    # canvas.SetLogy() understand why does not work
+    canvas.SetLogy() # requires SetRangeUser starting from >0
 
-    histolist[0].SetLineColor(2)
-    histolist[0].SetMarkerStyle(6)
     histolist[0].GetXaxis().SetTitle("NN score")
-    histolist[0].GetYaxis().SetRangeUser(0.,700.)
+    histolist[0].GetYaxis().SetRangeUser(0.0001,1000000.)
     histolist[0].GetYaxis().SetTitle("Events")
     histolist[0].Draw("p")
 
-    #histolist[1].Draw("same")
-
-    for n, item in enumerate(histolist[1:]):
-        item.SetLineColor(51+n)
-        item.SetMarkerStyle(6)
+    for item in histolist[1:]:
         item.Draw("same p")
 
     # legend, need to define coordinates
-    gPad.BuildLegend(0.64,0.38,0.94,0.87)
+    gPad.BuildLegend(0.64,0.58,0.97,0.97)
 
-    canvas.SaveAs("shapes_CCLUB.png")
+    if "CCLUB" in filenameroot:
+        canvas.SaveAs("shapes_CCLUB.png")
+    else:
+        canvas.SaveAs("shapes_Francisco.png")
 
-    #hs = THStack("hs","")
+
+    # --- do plots for each shape separated
+    for item in histolist:
+
+        canvas1 = TCanvas("c", "c", 800, 600)
+        canvas1.cd()
+        item.SetTitle("") # remove hist title
+        item.SetStats(0)
+        item.Draw("histo")
+        gPad.BuildLegend(0.7,0.87,0.95,0.95)
+        if "CCLUB" in filenameroot:
+            canvas1.SaveAs(item.GetName()+"_shape_CCLUB.png")
+        else:
+            canvas1.SaveAs(item.GetName()+"_shape_Francisco.png")
 
 
 
 if __name__ == "__main__":
-    # card CCLUB
-    filenametxt = "../card_CCLUB/hhbbtt_res1b_etau_2022_13p6TeV.txt"
-    filenameroot = "../card_CCLUB/hhbbtt_res1b_etau_2022_13p6TeV.root"
-    # card Francisco
-    # filename = "../card_Francisco_11Jun/MuTau_BinaryTransf_Res1b_signal_2022.txt"
-    # filename = "../card_Francisco_26Jun/MuTau_BinaryTransf_Res1b_signal_2022.txt"
+    # --- card CCLUB
+    # filenametxt = "../card_CCLUB/hhbbtt_res1b_etau_2022_13p6TeV.txt"
+    # filenameroot = "../card_CCLUB/hhbbtt_res1b_etau_2022_13p6TeV.root"
+    # --- card Francisco
+    filenametxt = "../card_Francisco_26Jun/MuTau_BinaryTransf_Res1b_signal_2022.txt"
+    filenameroot = "../card_Francisco_26Jun/MuTau_BinaryTransf_Res1b_signal_2022.root"
 
     print "Reading files", filenametxt, filenameroot, "..."
     readCardsAndPlot(filenametxt, filenameroot)
