@@ -7,7 +7,7 @@ Requirements: python 2, ROOT
 run with: python plotDatacardShapes.py
 """
 
-from ROOT import TCanvas, TFile, gPad, kRed, kBlue, kOrange, kMagenta, kGreen, kViolet
+from ROOT import TCanvas, TFile, gPad, kBlue, kGreen, kMagenta, kOrange, kRed, kViolet
 
 
 def readCardsAndPlot(filenametxt, filenameroot):
@@ -52,32 +52,43 @@ def readCardsAndPlot(filenametxt, filenameroot):
     # print(process_dict["process"]) # process_dict["process"] is a list
     for item in process_dict["process"]:
         histoitem = inhistofile.Get(item)
-        histoitem.SetName(item) # set name bc the one they get is weird
+        histoitem.SetName(item)  # set name bc the one they get is weird
         histolist.append(histoitem)
-        #print(item)
+        # print(item)
+
+        histoitem.SetTitle("")  # remove hist title
+        histoitem.SetStats(0)  # remove stat box
 
         ## put colors and pretty things in the histos
-        if histoitem.GetName().startswith("ggHH"):
-            histoitem.SetLineColor(kRed+1)
-            histoitem.SetMarkerColor(kRed+1)
-        elif histoitem.GetName().startswith("qqHH"):
-            histoitem.SetLineColor(kBlue+1)
-            histoitem.SetMarkerColor(kBlue+1)
-        elif histoitem.GetName() == "DY":
-            histoitem.SetLineColor(kOrange+7)
-            histoitem.SetMarkerColor(kOrange+7)
-        elif histoitem.GetName() == "TT":
-            histoitem.SetLineColor(kRed-1)
-            histoitem.SetMarkerColor(kRed-1)
-        elif histoitem.GetName() == "qcd":
+        hist_name = histoitem.GetName()
+        if hist_name.startswith("ggHH"):
+            histoitem.SetLineColor(kRed + 1)
+            histoitem.SetMarkerColor(kRed + 1)
+        elif hist_name.startswith("qqHH"):
+            histoitem.SetLineColor(kBlue + 1)
+            histoitem.SetMarkerColor(kBlue + 1)
+        elif hist_name == "DY":
+            histoitem.SetLineColor(kOrange + 7)
+            histoitem.SetMarkerColor(kOrange + 7)
+        elif hist_name == "TT":
+            histoitem.SetLineColor(kRed - 1)
+            histoitem.SetMarkerColor(kRed - 1)
+        elif hist_name == "qcd":
             histoitem.SetLineColor(kMagenta)
             histoitem.SetMarkerColor(kMagenta)
-        elif histoitem.GetName().startswith("ggH_") or histoitem.GetName().startswith("qqH_") or histoitem.GetName().startswith("ZH_") or histoitem.GetName().startswith("WH_") or histoitem.GetName().startswith("VH_") or histoitem.GetName().startswith("ttH_"):
-            histoitem.SetLineColor(kGreen+1)
-            histoitem.SetMarkerColor(kGreen+1)
+        elif (
+            hist_name.lower().startswith("ggh_")
+            or hist_name.lower().startswith("qqh_")
+            or hist_name.lower().startswith("zh_")
+            or hist_name.lower().startswith("wh_")
+            or hist_name.lower().startswith("vh_")
+            or hist_name.lower().startswith("tth_")
+        ):
+            histoitem.SetLineColor(kGreen + 1)
+            histoitem.SetMarkerColor(kGreen + 1)
         else:
-            histoitem.SetLineColor(kViolet+2)
-            histoitem.SetMarkerColor(kViolet+2)
+            histoitem.SetLineColor(kViolet + 2)
+            histoitem.SetMarkerColor(kViolet + 2)
         histoitem.SetLineStyle(1)
         histoitem.SetLineWidth(2)
         histoitem.SetMarkerStyle(6)
@@ -85,10 +96,10 @@ def readCardsAndPlot(filenametxt, filenameroot):
     # --- do plot with all shapes together
     canvas = TCanvas("canvas", "canvas", 800, 600)
     canvas.cd()
-    canvas.SetLogy() # requires SetRangeUser starting from >0
+    canvas.SetLogy()  # requires SetRangeUser starting from >0
 
     histolist[0].GetXaxis().SetTitle("NN score")
-    histolist[0].GetYaxis().SetRangeUser(0.0001,1000000.)
+    histolist[0].GetYaxis().SetRangeUser(0.0001, 1000000.0)
     histolist[0].GetYaxis().SetTitle("Events")
     histolist[0].Draw("p")
 
@@ -96,28 +107,25 @@ def readCardsAndPlot(filenametxt, filenameroot):
         item.Draw("same p")
 
     # legend, need to define coordinates
-    gPad.BuildLegend(0.64,0.58,0.97,0.97)
+    gPad.BuildLegend(0.64, 0.58, 0.97, 0.97)
 
     if "CCLUB" in filenameroot:
         canvas.SaveAs("shapes_CCLUB.png")
     else:
         canvas.SaveAs("shapes_Francisco.png")
 
-
     # --- do plots for each shape separated
     for item in histolist:
-
         canvas1 = TCanvas("c", "c", 800, 600)
         canvas1.cd()
-        item.SetTitle("") # remove hist title
-        item.SetStats(0)
+        item.SetTitle("")  # remove hist title
+        item.SetStats(0)  # remove stat box
         item.Draw("histo")
-        gPad.BuildLegend(0.7,0.87,0.95,0.95)
+        gPad.BuildLegend(0.7, 0.87, 0.95, 0.95)
         if "CCLUB" in filenameroot:
-            canvas1.SaveAs(item.GetName()+"_shape_CCLUB.png")
+            canvas1.SaveAs(item.GetName() + "_shape_CCLUB.png")
         else:
-            canvas1.SaveAs(item.GetName()+"_shape_Francisco.png")
-
+            canvas1.SaveAs(item.GetName() + "_shape_Francisco.png")
 
 
 if __name__ == "__main__":
@@ -128,5 +136,5 @@ if __name__ == "__main__":
     filenametxt = "../card_Francisco_26Jun/MuTau_BinaryTransf_Res1b_signal_2022.txt"
     filenameroot = "../card_Francisco_26Jun/MuTau_BinaryTransf_Res1b_signal_2022.root"
 
-    print "Reading files", filenametxt, filenameroot, "..."
+    print("Reading files", filenametxt, filenameroot, "...")
     readCardsAndPlot(filenametxt, filenameroot)
