@@ -7,10 +7,21 @@ Requirements: python 2, ROOT
 run with: python plotDatacardShapes.py
 """
 
-from ROOT import TCanvas, TFile, gPad, kBlue, kGreen, kMagenta, kOrange, kRed, kViolet
+from ROOT import (
+    TCanvas,
+    TFile,
+    gPad,
+    gSystem,
+    kBlue,
+    kGreen,
+    kMagenta,
+    kOrange,
+    kRed,
+    kViolet,
+)
 
 
-def readCardsAndPlot(filenametxt, filenameroot):
+def readCardsAndPlot(out_dir, filenametxt, filenameroot):
     """
     Function to read datacard and plot shapes
 
@@ -109,32 +120,40 @@ def readCardsAndPlot(filenametxt, filenameroot):
     # legend, need to define coordinates
     gPad.BuildLegend(0.64, 0.58, 0.97, 0.97)
 
-    if "CCLUB" in filenameroot:
-        canvas.SaveAs("shapes_CCLUB.png")
-    else:
-        canvas.SaveAs("shapes_Francisco.png")
+    canvas.SaveAs(out_dir + "/" + "all_shapes.png")
 
     # --- do plots for each shape separated
-    for item in histolist:
-        canvas1 = TCanvas("c", "c", 800, 600)
+    for n, item in enumerate(histolist):
+        canvas1 = TCanvas("c" + str(n), "c", 800, 600)
         canvas1.cd()
+        canvas1.SetLogy()
+
+        item.GetXaxis().SetRangeUser(0.0001, 100000.0)
         item.SetTitle("")  # remove hist title
         item.SetStats(0)  # remove stat box
         item.Draw("histo")
         gPad.BuildLegend(0.7, 0.87, 0.95, 0.95)
-        if "CCLUB" in filenameroot:
-            canvas1.SaveAs(item.GetName() + "_shape_CCLUB.png")
-        else:
-            canvas1.SaveAs(item.GetName() + "_shape_Francisco.png")
+        canvas1.SaveAs(out_dir + "/" + item.GetName() + "_shape.png")
 
 
 if __name__ == "__main__":
+    # ----------------
     # --- card CCLUB
     # filenametxt = "../card_CCLUB/hhbbtt_res1b_etau_2022_13p6TeV.txt"
     # filenameroot = "../card_CCLUB/hhbbtt_res1b_etau_2022_13p6TeV.root"
+    # text_outdir = "CCLUB"
+
+    # --------------------
     # --- card Francisco
     filenametxt = "../card_Francisco_26Jun/MuTau_BinaryTransf_Res1b_signal_2022.txt"
     filenameroot = "../card_Francisco_26Jun/MuTau_BinaryTransf_Res1b_signal_2022.root"
+    text_outdir = "Francisco"
 
+    # --- create output dir
+    print("Creating output dir ...")
+    out_dir = "plots_" + text_outdir
+    gSystem.Exec("mkdir -p " + out_dir)
+
+    # --- call function for plots
     print("Reading files", filenametxt, filenameroot, "...")
-    readCardsAndPlot(filenametxt, filenameroot)
+    readCardsAndPlot(out_dir, filenametxt, filenameroot)
