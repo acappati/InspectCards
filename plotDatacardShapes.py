@@ -145,9 +145,9 @@ if __name__ == "__main__":
 
     # --------------------
     # --- card Francisco
-    filenametxt = "../card_Francisco_22Jul/ETau_BinaryTransf_Res1b_signal_2022.txt"
-    filenameroot = "../card_Francisco_22Jul/ETau_BinaryTransf_Res1b_signal_2022.root"
-    text_outdir = "Francisco_22Jul"
+    filenametxt = "../card_Francisco_4Aug/ETau_BinaryTransf_Res1b_signal_2022.txt"
+    filenameroot = "../card_Francisco_4Aug/ETau_BinaryTransf_Res1b_signal_2022.root"
+    text_outdir = "Francisco_4Aug"
 
     # --- create output dir
     print("Creating output dir ...")
