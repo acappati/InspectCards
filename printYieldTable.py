@@ -82,7 +82,8 @@ if __name__ == "__main__":
     # card Francisco
     # filename = "../card_Francisco_11Jun/MuTau_BinaryTransf_Res1b_signal_2022.txt"
     # filename = "../card_Francisco_26Jun/MuTau_BinaryTransf_Res1b_signal_2022.txt"
-    filename = "../card_Francisco_15Jul/ETau_BinaryTransf_Res1b_signal_2022.txt"
+    # filename = "../card_Francisco_15Jul/ETau_BinaryTransf_Res1b_signal_2022.txt"
+    filename = "../card_Francisco_4Aug/ETau_BinaryTransf_Res1b_signal_2022.txt"
 
     print(f"Reading file {filename} ...\n")
     printTable(filename)
